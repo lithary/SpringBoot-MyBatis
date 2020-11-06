@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 /**
  * @author Xiaoyue Xiao
@@ -22,82 +23,78 @@ import java.net.URI;
 @RequestMapping("/books")
 public class BookController {
 
-    private BookService bookService;
+	private BookService bookService;
 
-    @Autowired
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
+	@Autowired
+	public BookController(BookService bookService) {
+		this.bookService = bookService;
+	}
 
-    @GetMapping
-    public ResponseEntity<?> getBooks(@RequestParam(value = "page", required = false) String pageString,
-                                      @RequestParam(value = "per_page", required = false) String perPageString) {
-        // Parse request parameters
-        int page = PageUtil.parsePage(pageString, PageConstant.PAGE);
-        int perPage = PageUtil.parsePerPage(perPageString, PageConstant.PER_PAGE);
+	@GetMapping
+	public ResponseEntity<?> getBooks(@RequestParam(value = "page", required = false) String pageString,
+			@RequestParam(value = "per_page", required = false) String perPageString) {
+		// Parse request parameters
+		int page = PageUtil.parsePage(pageString, PageConstant.PAGE);
+		int perPage = PageUtil.parsePerPage(perPageString, PageConstant.PER_PAGE);
+		PaginatedResult paResult = new PaginatedResult();
+		paResult.setData(bookService.getBooksByPage(page, perPage));
+		paResult.setTotalPage(bookService.getTotalPage(perPage));
+		return ResponseEntity.ok(paResult);
+	}
 
-        return ResponseEntity
-                .ok(new PaginatedResult()
-                        .setData(bookService.getBooksByPage(page, perPage))
-                        .setCurrentPage(page)
-                        .setTotalPage(bookService.getTotalPage(perPage)));
-    }
+	@GetMapping("/{bookId}")
+	public ResponseEntity<?> getBookById(@PathVariable Long bookId) {
+		ResourceNotFoundException reException = new ResourceNotFoundException();
+		Optional<Book> book = bookService.getBookById(bookId);
+		reException.setResourceName(ResourceNameConstant.BOOK);
+		reException.setId(bookId);
+		if (book.isPresent()) {
+			return ResponseEntity.ok(book);
+		} else {
+			throw reException;
+		}
+	}
 
-    @GetMapping("/{bookId}")
-    public ResponseEntity<?> getBookById(@PathVariable Long bookId) {
-        return bookService
-                .getBookById(bookId)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException()
-                        .setResourceName(ResourceNameConstant.BOOK)
-                        .setId(bookId));
-    }
+	@PostMapping
+	public ResponseEntity<?> postBook(@RequestBody Book book) {
+		bookService.saveBook(book);
 
-    @PostMapping
-    public ResponseEntity<?> postBook(@RequestBody Book book) {
-        bookService.saveBook(book);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(book.getId())
+				.toUri();
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(book.getId())
-                .toUri();
+		return ResponseEntity.created(location).body(book);
 
-        return ResponseEntity
-                .created(location)
-                .body(book);
+	}
 
-    }
+	@PutMapping("/{bookId}")
+	public ResponseEntity<?> putBook(@PathVariable Long bookId, @RequestBody Book book) {
+		assertBookExist(bookId);
+		book.setId(bookId);
+		bookService.modifyBookOnNameById(book);
 
-    @PutMapping("/{bookId}")
-    public ResponseEntity<?> putBook(@PathVariable Long bookId, @RequestBody Book book) {
-        assertBookExist(bookId);
+		return ResponseEntity.status(HttpStatus.OK).body(book);
+	}
 
-        bookService.modifyBookOnNameById(book.setId(bookId));
+	@DeleteMapping("/{bookId}")
+	public ResponseEntity<?> deleteBook(@PathVariable Long bookId) {
+		assertBookExist(bookId);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(book);
-    }
+		bookService.deleteBookById(bookId);
 
-    @DeleteMapping("/{bookId}")
-    public ResponseEntity<?> deleteBook(@PathVariable Long bookId) {
-        assertBookExist(bookId);
+		return ResponseEntity.noContent().build();
+	}
 
-        bookService.deleteBookById(bookId);
-
-        return ResponseEntity
-                .noContent()
-                .build();
-    }
-
-    /********************************** HELPER METHOD **********************************/
-    private void assertBookExist(Long bookId) {
-        bookService
-                .getBookById(bookId)
-                .orElseThrow(() -> new ResourceNotFoundException()
-                        .setResourceName(ResourceNameConstant.BOOK)
-                        .setId(bookId));
-    }
+	/**********************************
+	 * HELPER METHOD
+	 **********************************/
+	private void assertBookExist(Long bookId) {
+		ResourceNotFoundException reException = new ResourceNotFoundException();
+		reException.setResourceName(ResourceNameConstant.BOOK);
+		reException.setId(bookId);
+		Optional<Book> book = bookService.getBookById(bookId);
+		if (!book.isPresent()) {
+			throw reException;
+		}
+	}
 
 }

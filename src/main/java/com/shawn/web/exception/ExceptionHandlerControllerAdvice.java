@@ -16,54 +16,48 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 class ExceptionHandlerControllerAdvice {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> resourceNotFoundExceptionHandler(HttpServletRequest request, ResourceNotFoundException e) {
-        logError(request, e);
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<?> resourceNotFoundExceptionHandler(HttpServletRequest request, ResourceNotFoundException e) {
+		logError(request, e);
+		Error error = new Error();
+		error.setCode(ErrorCode.RESOURCE_NOT_FOUND_ERROR);
+		error.setMessage(e.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+	}
 
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(new Error()
-                        .setCode(ErrorCode.RESOURCE_NOT_FOUND_ERROR)
-                        .setMessage(e.getMessage()));
-    }
+	@ExceptionHandler(ParameterIllegalException.class)
+	public ResponseEntity<?> parameterIllegalExceptionHandler(HttpServletRequest request, ParameterIllegalException e) {
+		logError(request, e);
+		Error error = new Error();
+		error.setCode(ErrorCode.PARAMETER_ILLEGAL_ERROR);
+		error.setMessage("An invalid value was specified for one of the query parameters in the request URL.");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+	}
 
-    @ExceptionHandler(ParameterIllegalException.class)
-    public ResponseEntity<?> parameterIllegalExceptionHandler(HttpServletRequest request, ParameterIllegalException e) {
-        logError(request, e);
+	@ExceptionHandler(ServerInternalErrorException.class)
+	public ResponseEntity<?> serverInternalErrorExceptionHandler(HttpServletRequest request,
+			ServerInternalErrorException e) {
+		logError(request, e);
+		Error error = new Error();
+		error.setCode(ErrorCode.RESOURCE_NOT_FOUND_ERROR);
+		error.setMessage("The server encountered an internal error. Please retry the request.");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+	}
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new Error()
-                        .setCode(ErrorCode.PARAMETER_ILLEGAL_ERROR)
-                        .setMessage("An invalid value was specified for one of the query parameters in the request URL."));
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<?> exceptionHandler(HttpServletRequest request, Exception e) {
+		logError(request, e);
+		Error error = new Error();
+		error.setCode(ErrorCode.SERVER_INTERNAL_ERROR);
+		error.setMessage("The server met an unexpected error. Please contact administrators.");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+	}
 
-    @ExceptionHandler(ServerInternalErrorException.class)
-    public ResponseEntity<?> serverInternalErrorExceptionHandler(HttpServletRequest request, ServerInternalErrorException e) {
-        logError(request, e);
-
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new Error()
-                        .setCode(ErrorCode.RESOURCE_NOT_FOUND_ERROR)
-                        .setMessage("The server encountered an internal error. Please retry the request."));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> exceptionHandler(HttpServletRequest request, Exception e) {
-        logError(request, e);
-
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new Error()
-                        .setCode(ErrorCode.SERVER_INTERNAL_ERROR)
-                        .setMessage("The server met an unexpected error. Please contact administrators."));
-    }
-
-    /********************************** HELPER METHOD **********************************/
-    private void logError(HttpServletRequest request, Exception e) {
-        log.error("[URI: " + request.getRequestURI() + "]"
-                + "[error: " + e.getMessage() + "]");
-    }
+	/**********************************
+	 * HELPER METHOD
+	 **********************************/
+	private void logError(HttpServletRequest request, Exception e) {
+		log.error("[URI: " + request.getRequestURI() + "]" + "[error: " + e.getMessage() + "]");
+	}
 
 }

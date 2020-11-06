@@ -2,6 +2,8 @@ package com.shawn.monitor;
 
 import lombok.extern.apachecommons.CommonsLog;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -12,11 +14,10 @@ import org.springframework.stereotype.Component;
 /**
  * @author Xiaoyue Xiao
  */
-@CommonsLog
 @Aspect
 @Component
 public class PerformanceMonitor {
-
+	Log log = LogFactory.getFactory().getInstance(ServiceMonitor.class);
     /**
      * A join point is in the controller layer if the method is
      * modified by public and defined in a type in the

@@ -1,5 +1,6 @@
 package com.shawn.model.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +12,7 @@ import java.io.Serializable;
 /**
  * @author Xiaoyue Xiao
  */
-@Accessors(chain = true)
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 public class User implements Serializable {
 
     private static final long serialVersionUID = 7698862379923111158L;

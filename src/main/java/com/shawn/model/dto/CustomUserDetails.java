@@ -1,6 +1,8 @@
 package com.shawn.model.dto;
 
 import com.shawn.model.entity.User;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,8 +18,7 @@ import java.util.Set;
 /**
  * @author Xiaoyue Xiao
  */
-@Getter
-@ToString
+@Data
 public class CustomUserDetails extends User implements UserDetails {
 
     private static final long serialVersionUID = 1702923242319850756L;

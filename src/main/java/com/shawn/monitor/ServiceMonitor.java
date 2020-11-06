@@ -2,6 +2,9 @@ package com.shawn.monitor;
 
 import com.shawn.web.exception.ServerInternalErrorException;
 import lombok.extern.apachecommons.CommonsLog;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -14,10 +17,10 @@ import java.util.Arrays;
 /**
  * @author Xiaoyue Xiao
  */
-@CommonsLog
 @Aspect
 @Component
 public class ServiceMonitor {
+	Log log = LogFactory.getFactory().getInstance(ServiceMonitor.class);
 
     /**
      * A join point is in the service layer if the method is defined
