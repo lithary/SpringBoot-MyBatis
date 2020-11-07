@@ -41,7 +41,17 @@ public class BookController {
 		paResult.setTotalPage(bookService.getTotalPage(perPage));
 		return ResponseEntity.ok(paResult);
 	}
+	
+	@PostMapping("/saveBook")
+	public void saveBook(Book book) {
+		bookService.saveBook(book);
+	}
 
+	@PostMapping("/submitTask")
+	public void submitTask(Book book) {
+		bookService.submitTask(book);
+	}
+	
 	@GetMapping("/{bookId}")
 	public ResponseEntity<?> getBookById(@PathVariable Long bookId) {
 		ResourceNotFoundException reException = new ResourceNotFoundException();

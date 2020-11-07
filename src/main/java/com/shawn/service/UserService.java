@@ -1,14 +1,15 @@
 package com.shawn.service;
 
 import com.shawn.model.entity.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
+//import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
 
 /**
- * @author Xiaoyue Xiao
+ * @author Xiaoyue Xiao  
  */
-public interface UserService extends UserDetailsService {
+// extends UserDetailsService
+public interface UserService  {
 
     Optional<User> getUserById(Long id);
 

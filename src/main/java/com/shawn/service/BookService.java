@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * @author Xiaoyue Xiao
  */
-public interface BookService {
+public interface BookService extends ISubmitTaskService {
 
     Optional<Book> getBookById(Long id);
 

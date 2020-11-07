@@ -5,8 +5,8 @@ import com.shawn.model.entity.User;
 import com.shawn.repository.UserRepository;
 import com.shawn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//import org.springframework.security.core.userdetails.UserDetails;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -24,17 +24,17 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.selectUserByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("Could not find the user '" + username + "'");
-        }
-
-        // Not involve authorities, so pass null to authorities
-        return new CustomUserDetails(user, true, true, true, true, null);
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        User user = userRepository.selectUserByUsername(username);
+//
+//        if (user == null) {
+//            throw new UsernameNotFoundException("Could not find the user '" + username + "'");
+//        }
+//
+//        // Not involve authorities, so pass null to authorities
+//        return new CustomUserDetails(user, true, true, true, true, null);
+//    }
 
     @Override
     public Optional<User> getUserById(Long id) {

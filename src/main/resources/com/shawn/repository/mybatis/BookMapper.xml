@@ -25,9 +25,9 @@
 
     <insert id="insertBook" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO
-          book (book_store_id, name, author, price, topic, publish_date)
+          book (id,book_store_id, name, author, price, topic, publish_date)
         VALUES
-          (#{bookStoreId}, #{name}, #{author}, #{price}, #{topic}, #{publishDate})
+          (nextval('seq_book_id'),#{bookStoreId}, #{name}, #{author}, #{price}, #{topic}, #{publishDate})
     </insert>
 
     <update id="updateBookOnNameById">
