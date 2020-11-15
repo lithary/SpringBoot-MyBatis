@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Xiaoyue Xiao
@@ -26,5 +27,7 @@ public class Book implements Serializable {
     private Date publishDate;
 
     private Long bookStoreId;
+
+    private List<BookStore> bookStoreList;
 
 }
