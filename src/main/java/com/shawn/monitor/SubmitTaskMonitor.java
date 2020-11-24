@@ -14,23 +14,23 @@ import org.springframework.transaction.TransactionStatus;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class SubmitTaskMonitor {
     @Autowired
     DataSourceTransactionManager dataSourceTransactionManager;
     @Autowired
     TransactionDefinition transactionDefinition;
 
-    @Pointcut("execution(public * com.shawn.service.impl..*.submitTask(..))")
-    public void submit(){
-
-    }
+//    @Pointcut("execution(public * com.shawn.service.impl..*.submitTask(..))")
+//    public void submit(){
+//
+//    }
     /**
      * 环绕通知：目标方法执行前后分别执行一些代码，发生异常的时候执行另外一些代码
      * @return
      */
-    @Around(value="submit()")
+//    @Around(value="submit()")
     public Object aroundMethod(ProceedingJoinPoint jp){
         String methodName = jp.getSignature().getName();
         Object result = null;

@@ -2,15 +2,16 @@ package com.shawn.service.impl;
 
 import com.shawn.model.entity.Book;
 import com.shawn.model.entity.BookWithBookStore;
-import com.shawn.repository.BookRepository;
 import com.shawn.repository.mybatis.BookMapper;
-import com.shawn.service.BookService;
+import com.shawn.service.BookInterface;
 import com.shawn.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,9 +19,9 @@ import java.util.stream.Collectors;
 /**
  * @author Xiaoyue Xiao
  */
-@Service
-public class BookServiceImpl implements BookService {
-    @Autowired
+@Named("bookService")
+public class BookInterfaceImpl implements BookInterface {
+    @Inject
     private BookMapper bookRepository;
 
     @Override
@@ -59,7 +60,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public boolean saveBook(Book book) {
         return bookRepository.insertBook(book) > 0;
     }
@@ -77,36 +78,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public <T> void submitTask(T in) {
-        System.out.println("----------提交申请--------");
-        saveBook((Book) in);
-    }
-
-    @Override
-    public <T> void afterSubmit(T in) {
+    public void afterSubmit(Book in) {
         Book book = (Book) in;
-        book.setAuthor("lizhixiong"+(Math.random()*100));
+        book.setAuthor("lizhixiong" + (Math.random() * 100));
         saveBook(book);
         System.out.println("----------  after -----------");
     }
 
     @Override
-    public <T> void approveTask(T in) {
-
-    }
-
-    @Override
-    public <T> void afterApprove(T in) {
-
-    }
-
-    @Override
-    public <T> void rejectTask(T in) {
-
-    }
-
-    @Override
-    public <T> void afterReject(T in) {
-
+    public void submitTask(Book in) {
+        saveBook(in);
     }
 }
